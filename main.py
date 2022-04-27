@@ -1,7 +1,4 @@
-import pygame
 import random
-
-from settings import *
 from sprites import *
 from os import path
 
@@ -21,18 +18,19 @@ class Game:
     def load_data(self):
         self.dir = path.dirname(__file__)
         img_dir = path.join(self.dir, 'img')
-        with open(path.join(self.dir, HS_FILE), 'r') as f:
-            try:
+        try:
+            with open(path.join(self.dir, HS_FILE), 'r') as f:
                 self.highscore = int(f.read())
-            except:
-                self.highscore = 0
+        except:
+            print("high score file not found")
+            self.highscore = 0
         self.spritesheet = Spritesheet(path.join(img_dir, SPRITESHEET))
         self.cloud_images = []
         for i in range(1, 4):
             self.cloud_images.append(pygame.image.load(path.join(img_dir, f"cloud{i}.png")).convert())
         self.snd_dir = path.join(self.dir, "snd")
-        self.jump_sound = pygame.mixer.Sound(path.join(self.snd_dir, "Jump33.wav"))
-        self.boost_sound = pygame.mixer.Sound(path.join(self.snd_dir, "Boost16.wav"))
+        self.jump_sound = pygame.mixer.Sound(path.join(self.snd_dir, "snd_Jump33.wav"))
+        self.boost_sound = pygame.mixer.Sound(path.join(self.snd_dir, "snd_Boost16.wav"))
 
     def new(self):
         self.score = 0
@@ -45,7 +43,7 @@ class Game:
         for plat in PLATFORM_LIST:
             p = Platform(self, *plat)
         self.mob_timer = 0
-        pygame.mixer.music.load(path.join(self.snd_dir, "Happy Tune.ogg"))
+        pygame.mixer.music.load(path.join(self.snd_dir, "snd_Happy Tune.ogg"))
         for i in range(8):
             c = Cloud(self)
             c.rect. y += 500
@@ -141,7 +139,7 @@ class Game:
 
     def show_start_screen(self):
         # game splash/start screen
-        pygame.mixer.music.load(path.join(self.snd_dir, 'Yippee.ogg'))
+        pygame.mixer.music.load(path.join(self.snd_dir, 'snd_Yippee.ogg'))
         pygame.mixer.music.play(loops=-1)
         self.screen.fill(BGCOLOR)
         self.draw_text(TITLE_GAME, 48, WHITE, WIDTH / 2, HEIGHT / 4)
@@ -154,7 +152,7 @@ class Game:
 
     def show_go_screen(self):
         # game over/continue
-        pygame.mixer.music.load(path.join(self.snd_dir, 'Yippee.ogg'))
+        pygame.mixer.music.load(path.join(self.snd_dir, 'snd_Yippee.ogg'))
         pygame.mixer.music.play(loops=-1)
         if not self.running:
             return
