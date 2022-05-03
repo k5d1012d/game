@@ -156,9 +156,16 @@ class Pow(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self, self.groups)
         self.game = game
         self.plat = plat
-        self.type = choice(["boost"])
-        images = [self.game.spritesheet.get_image(820, 1805, 71, 70)]
-        self.image = images[0]
+        self.boost_sprites = {
+            "boost_speed": self.game.spritesheet.get_image(820, 1805, 71, 70),
+            "boost_score": self.game.spritesheet.get_image(825, 134, 71, 70)
+        }
+        self.type = choice([
+            "boost_speed",
+            "boost_score"
+        ])
+        # images = [self.game.spritesheet.get_image(820, 1805, 71, 70)]
+        self.image = self.boost_sprites[self.type]
         self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
         self.rect.centerx = self.plat.rect.centerx

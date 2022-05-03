@@ -1,6 +1,9 @@
 import random
-from sprites import *
 from os import path
+from threading import Timer
+
+from settings import *
+from sprites import *
 
 
 class Game:
@@ -33,8 +36,10 @@ class Game:
         self.boost_sound = pygame.mixer.Sound(path.join(self.snd_dir, "snd_Boost16.wav"))
 
     def new(self):
+        self.SCORE_CF = DEFAULT_BOOST_SCORE
         self.score = 0
         self.all_sprites = pygame.sprite.LayeredUpdates()
+        # print(self.all_sprites)
         self.clouds = pygame.sprite.Group()
         self.platforms = pygame.sprite.Group()
         self.powerups = pygame.sprite.Group()
@@ -49,6 +54,8 @@ class Game:
             c.rect. y += 500
 
         self.run()
+
+    def set_score_cf (self, new_cf): self.SCORE_CF = new_cf
 
     def run(self):
         pygame.mixer.music.play(loops=-1)
@@ -101,15 +108,19 @@ class Game:
                 plat.rect.y += max(abs(self.player.vel.y), 2)
                 if plat.rect.top > HEIGHT:
                     plat.kill()
-                    self.score += 1
+                    self.score += self.SCORE_CF
 
         # если взял бонус
         pow_hits = pygame.sprite.spritecollide(self.player, self.powerups, True)
         for pow in pow_hits:
-            if pow.type == "boost":
+            if pow.type == "boost_speed":
                 self.boost_sound.play()
                 self.player.vel.y = -BOOST_POWER
                 self.player.jumping = False
+            if pow.type == "boost_score":
+                self.boost_sound.play()
+                self.SCORE_CF = BOOST_SCORE
+                Timer(BOOST_SCORE_DURATION_SEC, self.set_score_cf, [DEFAULT_BOOST_SCORE]).start()
 
         # игрок упал вниз
         if self.player.rect.bottom > HEIGHT:
